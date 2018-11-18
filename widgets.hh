@@ -8,6 +8,10 @@
 
 struct Layout
 {
+protected:
+	Layout() = default;
+
+public:
 	virtual ~Layout() = default;
 };
 
@@ -16,8 +20,15 @@ struct GUIElement
 	virtual ~GUIElement() = default;
 	virtual void render() = 0;
 	virtual void onResize(uint32_t newWidth, uint32_t newHeight) = 0;
-	void addLayout(SP<Layout> const &layout);
-	void addElement(SP<GUIElement> const &element);
+	inline void addLayout(SP<Layout> const &layout)
+	{
+		this->layout = layout;
+	}
+	
+	inline void addElement(SP<GUIElement> const &element)
+	{
+		this->childElements.push_back(element);
+	}
 	
 	IR::vec2<float> pos, size, margin, padding;
 

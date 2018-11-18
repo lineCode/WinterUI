@@ -14,8 +14,11 @@ project(WinterGUI)
 
 set(SRC
 		glad.c
+		test.cc
 		WinterGUI.hh
-		widgets.cc widgets.hh signal.cc signal.hh test.cc util.hh)
+		widgets.hh
+		signal.hh
+		util.hh)
 
 include_directories(include)
 
@@ -27,8 +30,6 @@ endif()
 
 target_link_libraries(${PROJECT_NAME}
 		${CMAKE_SOURCE_DIR}/libs/libBeast.a
-		${CMAKE_SOURCE_DIR}/libs/libpng.a
-		${CMAKE_SOURCE_DIR}/libs/libz.a
 		${CMAKE_SOURCE_DIR}/libs/libfreetype.a
 		${CMAKE_SOURCE_DIR}/libs/libharfbuzz.a)
 
