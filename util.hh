@@ -6,7 +6,7 @@ struct Spinlock final
 {
 	
 	inline void lock() { while (accessor.test_and_set()) __asm volatile ("pause" ::: "memory"); }
-	inline bool try_lock() { return !accessor.test_and_set(); }
+	inline bool tryLock() { return !accessor.test_and_set(); }
 	inline void unlock() { accessor.clear(); }
 
 private:
@@ -19,53 +19,53 @@ struct RWSpinlock final
 	
 	RWSpinlock() = default;
 	
-	inline void read_access()
+	inline void readAccess()
 	{
 		while (accessor.test_and_set()) __asm volatile ("pause" ::: "memory");
-		while (write_sem.test_and_set()) __asm volatile ("pause" ::: "memory");
-		write_sem.clear();
+		while (writeSem.test_and_set()) __asm volatile ("pause" ::: "memory");
+		writeSem.clear();
 		readers.fetch_add(1);
 		accessor.clear();
 	}
 	
-	inline bool read_access_try()
+	inline bool readAccessTry()
 	{
 		if (accessor.test_and_set()) return false;
-		if (write_sem.test_and_set())
+		if (writeSem.test_and_set())
 		{
 			accessor.clear();
 			return false;
 		}
-		write_sem.clear();
+		writeSem.clear();
 		readers.fetch_add(1);
 		accessor.clear();
 		return true;
 	}
 	
-	inline void read_done()
+	inline void readDone()
 	{
 		readers.fetch_sub(1);
 	}
 	
-	inline void write_lock()
+	inline void writeLock()
 	{
 		while (accessor.test_and_set()) __asm volatile ("pause" ::: "memory");
-		while (write_sem.test_and_set()) __asm volatile ("pause" ::: "memory");
+		while (writeSem.test_and_set()) __asm volatile ("pause" ::: "memory");
 		while (readers.load()) __asm volatile ("pause" ::: "memory");
 		accessor.clear();
 	}
 	
-	inline bool write_lock_try()
+	inline bool writeLockTry()
 	{
 		if (accessor.test_and_set()) return false;
-		if (write_sem.test_and_set())
+		if (writeSem.test_and_set())
 		{
 			accessor.clear();
 			return false;
 		}
 		if (readers.load())
 		{
-			write_sem.clear();
+			writeSem.clear();
 			accessor.clear();
 			return false;
 		}
@@ -73,19 +73,19 @@ struct RWSpinlock final
 		return true;
 	}
 	
-	inline void write_unlock()
+	inline void writeUnlock()
 	{
-		write_sem.clear();
+		writeSem.clear();
 	}
 	
-	inline void write_to_read()
+	inline void writeToRead()
 	{
 		readers.fetch_add(1);
-		write_sem.clear();
+		writeSem.clear();
 	}
 
 private:
 	std::atomic_uint_fast8_t readers {0};
 	std::atomic_flag accessor {false};
-	std::atomic_flag write_sem {false};
+	std::atomic_flag writeSem {false};
 };

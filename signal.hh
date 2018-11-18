@@ -13,7 +13,7 @@ template <typename... Args> struct Signal
 	
 	struct SharedData
 	{
-		SharedData(Signal *parent) : parent(parent) {}
+		inline explicit SharedData(Signal *parent) : parent(parent) {}
 		
 		Signal *parent;
 		RWSpinlock accessor;
@@ -21,14 +21,14 @@ template <typename... Args> struct Signal
 	
 	struct Connection
 	{
-		~Connection()
+		inline ~Connection()
 		{
-			this->data->accessor.read_access();
+			this->data->accessor.readAccess();
 			if(this->data->parent)
 			{
 				this->data->parent->disconnect(this->id);
 			}
-			this->data->accessor.read_done();
+			this->data->accessor.readDone();
 		}
 		
 		ID id;
@@ -36,14 +36,15 @@ template <typename... Args> struct Signal
 	};
 	
 	Signal() = default;
-	~Signal()
+	
+	inline ~Signal()
 	{
-		this->data->accessor.write_lock();
+		this->data->accessor.writeLock();
 		this->data->parent = nullptr;
-		this->data->accessor.write_unlock();
+		this->data->accessor.writeUnlock();
 	}
 	
-	Connection connect(Func f)
+	inline Connection connect(Func f)
 	{
 		this->sl.lock();
 		ID id = this->idIncrementor++;
@@ -53,14 +54,14 @@ template <typename... Args> struct Signal
 		return out;
 	}
 	
-	void disconnect(ID id)
+	inline void disconnect(ID id)
 	{
 		this->sl.lock();
 		this->cbs.erase(std::remove_if(this->cbs.begin(), this->cbs.end(), [id](auto const &v){return v.first == id;}));
 		this->sl.unlock();
 	}
 	
-	void fire(Args ... args)
+	inline void fire(Args ... args)
 	{
 		this->sl.lock();
 		for(Callback &callback : this->cbs)
