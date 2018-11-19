@@ -1,9 +1,9 @@
 #pragma once
 
 #include "util.hh"
+#include "definitions.hh"
 
 #include <functional>
-#include <beast/def.hh>
 
 template <typename... Args> struct Signal
 {
@@ -44,7 +44,7 @@ template <typename... Args> struct Signal
 		this->data->accessor.writeUnlock();
 	}
 	
-	inline Connection connect(Func f)
+	WINTERGUI_API inline Connection connect(Func f)
 	{
 		this->sl.lock();
 		ID id = this->idIncrementor++;
@@ -54,14 +54,14 @@ template <typename... Args> struct Signal
 		return out;
 	}
 	
-	inline void disconnect(ID id)
+	WINTERGUI_API inline void disconnect(ID id)
 	{
 		this->sl.lock();
 		this->cbs.erase(std::remove_if(this->cbs.begin(), this->cbs.end(), [id](auto const &v){return v.first == id;}));
 		this->sl.unlock();
 	}
 	
-	inline void fire(Args ... args)
+	WINTERGUI_API inline void fire(Args ... args)
 	{
 		this->sl.lock();
 		for(Callback &callback : this->cbs)

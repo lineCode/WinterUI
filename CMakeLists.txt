@@ -13,25 +13,26 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--high-entropy-v
 project(WinterGUI)
 
 set(SRC
+		api.hh
 		glad.c
-		test.cc
-		WinterGUI.hh
-		widgets.hh
+		definitions.hh
+		pixmap.hh
 		signal.hh
-		util.hh)
+		util.hh
+		widgets.hh
+		WinterGUI.hh)
 
 include_directories(include)
 
 if(${TEST})
-	add_executable(${PROJECT_NAME} ${SRC})
+	add_executable(${PROJECT_NAME} ${SRC} test.cc)
 else()
-	add_library(${PROJECT_NAME} SHARED ${SRC})
+	add_library(${PROJECT_NAME} SHARED ${SRC} dummy.cc)
 endif()
 
 target_link_libraries(${PROJECT_NAME}
-		${CMAKE_SOURCE_DIR}/libs/libBeast.a
-		${CMAKE_SOURCE_DIR}/libs/libfreetype.a
-		${CMAKE_SOURCE_DIR}/libs/libharfbuzz.a)
+		${CMAKE_SOURCE_DIR}/libs/libpango-1.0.dll.a
+		${CMAKE_SOURCE_DIR}/libs/libpangowin32-1.0.dll.a)
 
 add_definitions(-DFORCE_DISCRETE_GPU)
 

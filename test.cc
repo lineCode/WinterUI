@@ -1,4 +1,5 @@
 #include "signal.hh"
+#include "WinterGUI.hh"
 
 int main()
 {
