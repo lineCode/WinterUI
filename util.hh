@@ -1,7 +1,5 @@
 #pragma once
 
-#include "api.hh"
-
 #include <atomic>
 
 struct Spinlock final

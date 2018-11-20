@@ -1,6 +1,5 @@
 #pragma once
 
-#include "api.hh"
 #include "signal.hh"
 #include "definitions.hh"
 #include "pixmap.hh"
@@ -32,34 +31,37 @@ public:
 	virtual ~Layout() = default;
 };
 
-struct GUIElement
+template <typename Key> struct GUIElement
 {
+	using Key_t = Key;
+	
 	virtual ~GUIElement() = default;
 	
 	//The pure virtual functions need to be called by the user of this library at appropriate times
-	WINTERGUI_API virtual void render() = 0;
+	virtual void render() = 0;
 	
 	//Events
-	WINTERGUI_API virtual void onResize(uint32_t newWidth, uint32_t newHeight) = 0;
-	WINTERGUI_API virtual void onMouseUp(MouseButtons button) {}
-	WINTERGUI_API virtual void onMouseDown(MouseButtons button) {}
-	WINTERGUI_API virtual void onMouseMove(IR::vec2<int32_t> const &newPos) {}
-	WINTERGUI_API template <typename T> virtual void onKeyDown(T key) {}
-	WINTERGUI_API template <typename T> virtual void onKeyUp(T key) {}
-	WINTERGUI_API virtual void onTextInput(std::string const &input) {}
-	WINTERGUI_API virtual void onFocus() {}
+	virtual void onResize(uint32_t newWidth, uint32_t newHeight) = 0;
+	virtual void onMouseUp(MouseButtons button) {}
+	virtual void onMouseDown(MouseButtons button) {}
+	virtual void onMouseMove(IR::vec2<int32_t> const &newPos) {}
+	virtual void onKeyDown(Key_t key) {}
+	virtual void onKeyUp(Key_t key) {}
+	virtual void onTextInput(std::string const &input) {}
+	virtual void onFocus() {}
 	
-	WINTERGUI_API inline void addLayout(SP<Layout> const &layout)
+	inline void addLayout(SP<Layout> const &layout)
 	{
 		this->layout = layout;
 	}
 	
-	WINTERGUI_API inline void addElement(SP<GUIElement> const &element)
+	inline void addElement(SP<GUIElement> const &element)
 	{
 		this->childElements.push_back(element);
 	}
 	
 	IR::vec2<int32_t> pos, size;
+	Observer connectionObserver;
 
 private:
 	inline IR::aabb2D<int32_t> getHitbox()
@@ -94,55 +96,58 @@ struct FlexBoxLayout : public Layout
 /*Components-----------------------------------------------------------------------------------------------------------------------------*/
 
 /// 
-struct Pane : public GUIElement
+template <typename BASE> struct Pane : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline static SP<Pane> create()
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void customTex(Pixmap const &pixmap)
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	{
+		
+	}
+	
+	inline void customTex(SP<Pixmap> const &pixmap)
 	{
 		this->pixmap = pixmap;
 	}
-	
-	Signal clicked = {};
 
 private:
-	Pixmap pixmap;
+	SP<Pixmap> pixmap;
 };
 
 /// 
-struct Button : public GUIElement
+template <typename BASE> struct Button : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		//render based on state
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		if(button == LEFT) this->pressing = false;
 		this->stateChanged.fire(button, this->pressing);
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		if(button == LEFT) this->pressing = true;
 		this->stateChanged.fire(button, this->pressing);
 	}
 	
-	WINTERGUI_API inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
 	{
 		auto hitbox = IR::aabb2D<float>(this->pos.x(), this->pos.x() + this->size.x(), this->pos.y() - this->size.y(), this->pos.y());
 		if(hitbox.containsPoint(newPos.x(), newPos.y()))
@@ -159,12 +164,12 @@ struct Button : public GUIElement
 		}
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyDown(T key) override
+	void onKeyDown(typename BASE::Key_t key) override
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyUp(T key) override
+	virtual void onKeyUp(typename BASE::Key_t key) override
 	{
 		
 	}
@@ -174,7 +179,7 @@ struct Button : public GUIElement
 		NORMAL, HOVER, PRESSED
 	};
 	
-	WINTERGUI_API inline void customTex(PixmapElem elem, Pixmap const &pixmap)
+	inline void customTex(PixmapElem elem, SP<Pixmap> const &pixmap)
 	{
 		switch(elem)
 		{
@@ -191,45 +196,45 @@ struct Button : public GUIElement
 	}
 	
 	bool hovering = false, pressing = false;
-	Signal stateChanged = {};
-	Signal onHover = {};
+	Signal<MouseButtons, bool> stateChanged = {};
+	Signal<> onHover = {};
 
 private:
-	Pixmap pixmapNormal, pixmapHover, pixmapPressed;
+	SP<Pixmap> pixmapNormal, pixmapHover, pixmapPressed;
 };
 
 /// 
-struct Checkbox : public GUIElement
+template <typename BASE> struct Checkbox : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		this->value = !this->value;
 		this->stateChanged.fire(this->value);
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		//change frame?
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyDown(T key) override
+	void onKeyDown(typename BASE::Key_t key) override
 	{
-		this->keyPressed.fire(true, key);
+		//this->keyPressed.fire(true, key);
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyUp(T key) override
+	virtual void onKeyUp(typename BASE::Key_t key) override
 	{
-		this->keyPressed.fire(false, key);
+		//this->keyPressed.fire(false, key);
 	}
 	
 	enum struct PixmapElem
@@ -237,7 +242,7 @@ struct Checkbox : public GUIElement
 		NORMAL, HOVER, CHECKED
 	};
 	
-	WINTERGUI_API inline void customTex(PixmapElem elem, Pixmap const &pixmap)
+	inline void customTex(PixmapElem elem, Pixmap const &pixmap)
 	{
 		switch(elem)
 		{
@@ -254,47 +259,47 @@ struct Checkbox : public GUIElement
 	}
 	
 	bool value = false;
-	Signal stateChanged = {};
-	Signal keyPressed = {};
+	Signal<bool> stateChanged = {};
+	Signal<> keyPressed = {};
 	
 private:
-	Pixmap pixmapNormal, pixmapHover, pixmapChecked;
+	SP<Pixmap> pixmapNormal, pixmapHover, pixmapChecked;
 };
 
 /// 
-struct RadioButtonBank : public GUIElement
+template <typename BASE> struct RadioButtonBank : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyDown(T key) override
+	template <typename T> void onKeyDown(T key)
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyUp(T key) override
+	template <typename T> void onKeyUp(T key)
 	{
 		
 	}
@@ -304,7 +309,7 @@ struct RadioButtonBank : public GUIElement
 		NORMAL, SELECTED
 	};
 	
-	WINTERGUI_API inline void customTex(PixmapElem elem, Pixmap const &pixmap)
+	inline void customTex(PixmapElem elem, SP<Pixmap> const &pixmap)
 	{
 		switch(elem)
 		{
@@ -318,46 +323,46 @@ struct RadioButtonBank : public GUIElement
 	}
 	
 	uint32_t selected = 0;
-	Signal stateChanged = {};
+	Signal<uint32_t> stateChanged = {};
 
 private:
-	Pixmap pixmapNormal, pixmapSelected;
+	SP<Pixmap> pixmapNormal, pixmapSelected;
 };
 
 /// 
-struct Slider : public GUIElement
+template <typename BASE> struct Slider : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyDown(T key) override
+	template <typename T> void onKeyDown(T key)
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyUp(T key) override
+	template <typename T> void onKeyUp(T key)
 	{
 		
 	}
@@ -367,7 +372,7 @@ struct Slider : public GUIElement
 		RAIL, HANDLE, ICON
 	};
 	
-	WINTERGUI_API inline void customTex(PixmapElem elem, Pixmap const &pixmap)
+	inline void customTex(PixmapElem elem, SP<Pixmap> const &pixmap)
 	{
 		switch(elem)
 		{
@@ -384,41 +389,41 @@ struct Slider : public GUIElement
 	}
 	
 	float value = 0.0f;
-	Signal stateChanged = {};
+	Signal<float> stateChanged = {};
 
 private:
-	Pixmap pixmapRail, pixmapHandle, pixmapIcon;
+	SP<Pixmap> pixmapRail, pixmapHandle, pixmapIcon;
 };
 
 /// 
-struct DropdownMenu : public GUIElement
+template <typename BASE> struct DropdownMenu : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onTextInput(std::string const &input) override
+	inline void onTextInput(std::string const &input) override
 	{
 		
 	}
@@ -428,7 +433,7 @@ struct DropdownMenu : public GUIElement
 		FRAME, FRAMEBORDER, EXTFRAME, EXTFRAMEBORDER
 	};
 	
-	WINTERGUI_API inline void customTex(PixmapElem elem, Pixmap const &pixmap)
+	inline void customTex(PixmapElem elem, SP<Pixmap> const &pixmap)
 	{
 		switch(elem)
 		{
@@ -448,47 +453,47 @@ struct DropdownMenu : public GUIElement
 	}
 	
 	uint32_t selected = 0;
-	Signal onOpen = {};
-	Signal stateChanged = {};
+	Signal<> onOpen = {};
+	Signal<uint32_t> stateChanged = {};
 
 private:
-	Pixmap pixmapFrame, pixmapFrameBorder, pixmapExtendedFrame, pixmapExtendedFrameBorder;
+	SP<Pixmap> pixmapFrame, pixmapFrameBorder, pixmapExtendedFrame, pixmapExtendedFrameBorder;
 };
 
 /// 
-struct MenuBar : public GUIElement
+template <typename BASE> struct MenuBar : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyDown(T key) override
+	template <typename T> void onKeyDown(T key)
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyUp(T key) override
+	template <typename T> void onKeyUp(T key)
 	{
 		
 	}
@@ -498,7 +503,7 @@ struct MenuBar : public GUIElement
 		BACKGROUND, BORDER
 	};
 	
-	WINTERGUI_API inline void customTex(PixmapElem elem, Pixmap const &pixmap)
+	inline void customTex(PixmapElem elem, SP<Pixmap> const &pixmap)
 	{
 		switch(elem)
 		{
@@ -511,110 +516,115 @@ struct MenuBar : public GUIElement
 		}
 	}
 	
-	Signal onOpen = {};
-	Signal hover {};
+	Signal<> onOpen = {};
+	Signal<> hover {};
 
 private:
-	Pixmap pixmapBackground, pixmapBorder;
+	SP<Pixmap> pixmapBackground, pixmapBorder;
 };
 
 /// 
-struct MenuItem : public GUIElement
+template <typename BASE> struct MenuItem : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyDown(T key) override
+	template <typename T> void onKeyDown(T key)
 	{
 		
 	}
 	
-	WINTERGUI_API template <typename T> void onKeyUp(T key) override
+	template <typename T> void onKeyUp(T key)
 	{
 		
 	}
 	
 	std::string text = "";
-	Signal clicked {};
-	Signal hover {};
+	Signal<MouseButtons, bool> clicked {};
+	Signal<> hover {};
 };
 
 /// 
-struct Label : public GUIElement
+template <typename BASE> struct Label : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void customTex(Pixmap const &pixmap)
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	{
+		
+	}
+	
+	inline void customTex(SP<Pixmap> const &pixmap)
 	{
 		this->pixmapBackground = pixmap;
 	}
 	
 	std::string text = "";
-	Signal hover {};
+	Signal<> hover {};
 
 private:
-	Pixmap pixmapBackground;
+	SP<Pixmap> pixmapBackground;
 };
 
 /// 
-struct TextLine : public GUIElement
+template <typename BASE> struct TextLine : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onTextInput(std::string const &input) override
+	inline void onTextInput(std::string const &input) override
 	{
 		
 	}
@@ -624,7 +634,7 @@ struct TextLine : public GUIElement
 		BACKGROUND, BORDER,
 	};
 	
-	WINTERGUI_API inline void customTex(PixmapElem elem, Pixmap const &pixmap)
+	inline void customTex(PixmapElem elem, SP<Pixmap> const &pixmap)
 	{
 		switch(elem)
 		{
@@ -639,43 +649,43 @@ struct TextLine : public GUIElement
 	
 	std::string text = "";
 	std::string selectedText = "";
-	Signal textChanged {};
-	Signal hover {};
-	Signal drag {};
+	Signal<std::string> textChanged {};
+	Signal<> hover {};
+	Signal<uint64_t> drag {};
 
 private:
-	Pixmap pixmapBackground, pixmapBorder;
+	SP<Pixmap> pixmapBackground, pixmapBorder;
 };
 
 /// 
-struct TextArea : public GUIElement
+template <typename BASE> struct TextArea : public BASE
 {
-	WINTERGUI_API inline void render() override
+	inline void render() override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseUp(MouseButtons button) override
+	inline void onMouseUp(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseDown(MouseButtons button) override
+	inline void onMouseDown(MouseButtons button) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
 	{
 		
 	}
 	
-	WINTERGUI_API inline void onTextInput(std::string const &input) override
+	inline void onTextInput(std::string const &input) override
 	{
 		
 	}
@@ -685,7 +695,7 @@ struct TextArea : public GUIElement
 		BACKGROUND, BORDER,
 	};
 	
-	WINTERGUI_API inline void customTex(PixmapElem elem, Pixmap const &pixmap)
+	inline void customTex(PixmapElem elem, SP<Pixmap> const &pixmap)
 	{
 		switch(elem)
 		{
@@ -700,10 +710,10 @@ struct TextArea : public GUIElement
 	
 	std::string text = "";
 	std::string selectedText = "";
-	Signal textChanged {};
-	Signal hover {};
-	Signal drag {};
+	Signal<std::string> textChanged {};
+	Signal<> hover {};
+	Signal<uint64_t> drag {};
 
 private:
-	Pixmap pixmapBackground, pixmapBorder;
+	SP<Pixmap> pixmapBackground, pixmapBorder;
 };
