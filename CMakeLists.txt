@@ -8,13 +8,14 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--high-entropy-v
 project(WinterGUI)
 include_directories(include)
 set(SRC
-		glad.c
 		definitions.hh
+		glad.c
+		observer.hh
 		pixmap.hh
 		signal.hh
 		util.hh
 		widgets.hh
-		WinterGUI.hh observer.hh)
+		WinterGUI.hh )
 add_executable(${PROJECT_NAME} ${SRC} test.cc)
 target_link_libraries(${PROJECT_NAME}
 		${CMAKE_SOURCE_DIR}/libs/libpango-1.0.dll.a
