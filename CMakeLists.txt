@@ -10,12 +10,15 @@ include_directories(include)
 set(SRC
 		definitions.hh
 		glad.c
+		mesh.hh
 		observer.hh
 		pixmap.hh
+		shader.hh
+		sharedAssets.hh
 		signal.hh
 		util.hh
 		widgets.hh
-		WinterGUI.hh )
+		WinterGUI.hh)
 add_executable(${PROJECT_NAME} ${SRC} test.cc)
 target_link_libraries(${PROJECT_NAME}
 		${CMAKE_SOURCE_DIR}/libs/libpango-1.0.dll.a

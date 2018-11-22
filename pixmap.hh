@@ -6,7 +6,6 @@
 
 struct Pixmap
 {
-	/// Deleterino
 	inline ~Pixmap()
 	{
 		glDeleteTextures(1, &this->texHandle);
