@@ -34,11 +34,11 @@ public:
 	virtual ~Layout() = default;
 };
 
-template <typename Key> struct GUIElement
+template <typename Key> struct Widget
 {
 	using Key_t = Key;
 	
-	virtual ~GUIElement() = default;
+	virtual ~Widget() = default;
 	
 	//The pure virtual functions need to be called by the user of this library at appropriate times
 	virtual void render() = 0;
@@ -56,7 +56,7 @@ template <typename Key> struct GUIElement
 		this->layout = layout;
 	}
 	
-	inline void addElement(SP<GUIElement> const &element)
+	inline void addElement(SP<Widget> const &element)
 	{
 		this->childElements.push_back(element);
 	}
@@ -72,7 +72,7 @@ private:
 		return IR::aabb2D<int32_t>(this->pos.x(), this->pos.x() + this->size.x(), this->pos.y() - this->size.y(), this->pos.y());
 	}
 	
-	std::vector<SP<GUIElement>> childElements;
+	std::vector<SP<Widget>> childElements;
 	SP<Layout> layout;
 };
 

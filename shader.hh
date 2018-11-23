@@ -54,7 +54,7 @@ struct Shader
 		glDeleteShader(fragHandle);
 	}
 	
-	inline Shader(std::string const &compPath)
+	inline explicit Shader(std::string const &compPath)
 	{
 		char const *compShader = readTextFile(compPath).data();
 		uint32_t compHandle = glCreateShader(GL_COMPUTE_SHADER);
@@ -69,9 +69,43 @@ struct Shader
 		glDeleteShader(compHandle);
 	}
 	
+	inline Shader(char const *vertSource, char const *fragSource)
+	{
+		uint32_t vertHandle = glCreateShader(GL_VERTEX_SHADER), fragHandle = glCreateShader(GL_FRAGMENT_SHADER);
+		this->shaderHandle = glCreateProgram();
+		glShaderSource(vertHandle, 1, &vertSource, nullptr);
+		glShaderSource(fragHandle, 1, &fragSource, nullptr);
+		glCompileShader(vertHandle);
+		if(!_checkShader(GL_COMPILE_STATUS, vertHandle, "local")) return;
+		glCompileShader(fragHandle);
+		if(!_checkShader(GL_COMPILE_STATUS, fragHandle, "local")) return;
+		glAttachShader(this->shaderHandle, vertHandle);
+		glAttachShader(this->shaderHandle, fragHandle);
+		glLinkProgram(this->shaderHandle);
+		if(!_checkShader(GL_LINK_STATUS, this->shaderHandle)) return;
+		glDetachShader(this->shaderHandle, vertHandle);
+		glDetachShader(this->shaderHandle, fragHandle);
+		glDeleteShader(vertHandle);
+		glDeleteShader(fragHandle);
+	}
+	
+	inline explicit Shader(char const *compSource)
+	{
+		uint32_t compHandle = glCreateShader(GL_COMPUTE_SHADER);
+		this->shaderHandle = glCreateProgram();
+		glShaderSource(compHandle, 1, &compSource, nullptr);
+		glCompileShader(compHandle);
+		if(!_checkShader(GL_COMPILE_STATUS, compHandle, "local")) return;
+		glAttachShader(this->shaderHandle, compHandle);
+		glLinkProgram(this->shaderHandle);
+		if(!_checkShader(GL_LINK_STATUS, this->shaderHandle)) return;
+		glDetachShader(this->shaderHandle, compHandle);
+		glDeleteShader(compHandle);
+	}
+	
 	inline ~Shader()
 	{
-		glDeleteShader(this->shaderHandle);
+		glDeleteProgram(this->shaderHandle);
 	}
 	
 	inline void bind()
@@ -109,14 +143,14 @@ struct Shader
 		glUniform4fv(glGetUniformLocation(this->shaderHandle, location.data()), 1, val.data);
 	}
 	
-	inline void sendMat4f(std::string const &location, IR::mat4x4<float> const &val)
-	{
-		glUniformMatrix4fv(glGetUniformLocation(this->shaderHandle, location.data()), 1, GL_FALSE, &val[0][0]);
-	}
-	
 	inline void sendMat3f(std::string const &location, IR::mat3x3<float> const &val)
 	{
 		glUniformMatrix3fv(glGetUniformLocation(this->shaderHandle, location.data()), 1, GL_FALSE, &val[0][0]);
+	}
+	
+	inline void sendMat4f(std::string const &location, IR::mat4x4<float> const &val)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(this->shaderHandle, location.data()), 1, GL_FALSE, &val[0][0]);
 	}
 
 private:

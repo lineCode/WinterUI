@@ -6,11 +6,6 @@
 
 struct Pixmap
 {
-	inline ~Pixmap()
-	{
-		glDeleteTextures(1, &this->texHandle);
-	}
-	
 	/// Pixmap from data
 	inline Pixmap(unsigned char **pixmap, size_t width, size_t height, bool hasAlpha = false, bool srgb = false)
 	{
@@ -23,7 +18,7 @@ struct Pixmap
 		glTextureStorage2D(this->texHandle, 1, this->colorFormat == 2 ? (srgb ? GL_SRGB8 : GL_RGB8) : (srgb ? GL_SRGB8_ALPHA8 : GL_RGBA8), this->width, this->height);
 		for(uint32_t i = 0; i < this->height; i++)
 		{
-			glTextureSubImage2D(this->texHandle, 0, 0, i, this->width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixmap[i]);
+			glTextureSubImage2D(this->texHandle, 0, 0, i, this->width, 1, this->colorFormat == 2 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, pixmap[i]);
 		}
 		glTextureParameterf(this->texHandle, GL_TEXTURE_MAX_ANISOTROPY, 1);
 		glTextureParameteri(this->texHandle, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -46,6 +41,11 @@ struct Pixmap
 		glCreateTextures(GL_TEXTURE_2D, 1, &this->texHandle);
 		glTextureStorage2D(this->texHandle, 1, this->colorFormat == 2 ? (srgb ? GL_SRGB8 : GL_RGB8) : (srgb ? GL_SRGB8_ALPHA8 : GL_RGBA8), 1, 1);
 		for(uint32_t i = 0; i < 1; i++) glTextureSubImage2D(this->texHandle, 0, 0, i, 1, 1, this->colorFormat == 2 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, imageData[i]);
+	}
+	
+	inline ~Pixmap()
+	{
+		glDeleteTextures(1, &this->texHandle);
 	}
 	
 	inline void setInterp(int32_t min, int32_t mag)
