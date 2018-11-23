@@ -5,7 +5,7 @@ WinterGUI must be included after OpenGL symbols have been loaded.
 
 To allow use of any input library, Widget must be templated with your libraries keyboard keys enum.
 Eg for SDL2:
-```
+```cpp
 using Widget_t = Widget<SDL_Scancode>;
 using Pane_t = Pane<Widget_t>;
 SP<Pane_t> pane = Pane_t::create();
