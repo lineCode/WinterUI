@@ -77,7 +77,7 @@ namespace Iris
 		
 		inline vec4<T>() = default;
 		
-		template<typename U> vec4<T>(vec4<U> const &other)
+		template<typename U> constexpr vec4<T>(vec4<U> const &other)
 		{
 			this->data[0] = other.data[0];
 			this->data[1] = other.data[1];
@@ -86,7 +86,7 @@ namespace Iris
 		}
 		
 		/// Construct a v4 out of 4 values
-		inline vec4<T>(T x, T y, T z, T w)
+		constexpr inline vec4<T>(T x, T y, T z, T w)
 		{
 			this->data[0] = x;
 			this->data[1] = y;
@@ -94,7 +94,7 @@ namespace Iris
 			this->data[3] = w;
 		}
 		
-		inline vec4<T>(T const &scalar)
+		constexpr inline vec4<T>(T const &scalar)
 		{
 			this->data[0] = scalar;
 			this->data[1] = scalar;
@@ -102,7 +102,7 @@ namespace Iris
 			this->data[3] = scalar;
 		}
 		
-		inline vec4<T>(vec2<T> const &first, vec2<T> const &second)
+		constexpr inline vec4<T>(vec2<T> const &first, vec2<T> const &second)
 		{
 			this->data[0] = first.x();
 			this->data[1] = first.y();
@@ -110,7 +110,7 @@ namespace Iris
 			this->data[3] = second.y();
 		}
 		
-		inline vec4<T>(vec2<T> const &first, T const &second, T const &third)
+		constexpr inline vec4<T>(vec2<T> const &first, T const &second, T const &third)
 		{
 			this->data[0] = first.x();
 			this->data[1] = first.y();
@@ -118,7 +118,7 @@ namespace Iris
 			this->data[3] = third;
 		}
 		
-		inline vec4<T>(vec3<T> const &first, T const &second)
+		constexpr inline vec4<T>(vec3<T> const &first, T const &second)
 		{
 			this->data[0] = first.x();
 			this->data[1] = first.y();

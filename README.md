@@ -1,20 +1,23 @@
 # WinterGUI
-A C++17 and OpenGL 4.5 GUI library
+A header-only C++17 and OpenGL 4.5 GUI library
 -
-WinterGUI must be included after OpenGL symbols have been loaded.
+WinterGUI must be included and used <b>after</b> OpenGL symbols have been loaded.
+Additionally, you must provide an FBO for the GUI to render to.
 
-To allow use of any input library, Widget must be templated with your libraries keyboard keys enum.
-Eg for SDL2:
+To allow use of any input library without conversion tables, Widget must be templated with your libraries' scancode enum, and widgets must be templated with the templated Widget,
+eg for SDL2:
 ```cpp
 using Widget_t = Widget<SDL_Scancode>;
 using Pane_t = Pane<Widget_t>;
-std::shared_ptr<Pane_t> pane = Pane_t::create();
+std::shared_ptr<Pane_t> pane = Pane_t::create(sharedAssets);
 ```
+Prior to rendering, make sure to disable depth testing if on, or you may get unexpected results.
 
 Classes derived from Widget have several functions which you must call at the appropriate times:
 - render() must be called on the thread that owns the OpenGL context
 - onResize() should be called whenever the context's size changes
-- onMouseUp() your windowing/input library (eg SDL2) should provide the rest of these
+- Your windowing/input library (eg SDL2) should provide these events, use the info it gives you to call the following events:
+- onMouseUp()
 - onMouseDown()
 - onKeyUp()
 - onKeyDown()

@@ -156,7 +156,7 @@ namespace Iris
 		
 		inline vec3<T>() = default;
 		
-		template<typename U> vec3<T>(vec3<U> const &other)
+		template<typename U> constexpr vec3<T>(vec3<U> const &other)
 		{
 			this->data[0] = other.data[0];
 			this->data[1] = other.data[1];
@@ -164,21 +164,21 @@ namespace Iris
 		}
 		
 		/// Construct a v3 out of 3 values
-		inline vec3<T>(T const &x, T const &y, T const &z)
+		constexpr inline vec3<T>(T const &x, T const &y, T const &z)
 		{
 			this->data[0] = x;
 			this->data[1] = y;
 			this->data[2] = z;
 		}
 		
-		inline vec3<T>(T const &scalar)
+		constexpr inline vec3<T>(T const &scalar)
 		{
 			this->data[0] = scalar;
 			this->data[1] = scalar;
 			this->data[2] = scalar;
 		}
 		
-		inline vec3<T>(vec2<T> const &first, T const &second)
+		constexpr inline vec3<T>(vec2<T> const &first, T const &second)
 		{
 			this->data[0] = first.x();
 			this->data[1] = first.y();
@@ -186,7 +186,7 @@ namespace Iris
 		}
 		
 		/// Truncate a v4 to a v3
-		inline vec3<T>(vec4<T> const &trunc)
+		constexpr inline vec3<T>(vec4<T> const &trunc)
 		{
 			this->data[0] = trunc.x();
 			this->data[1] = trunc.y();

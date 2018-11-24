@@ -38,9 +38,19 @@ template <typename Key> struct Widget
 {
 	using Key_t = Key;
 	
+	inline Widget(SP<Widget> parent)
+	{
+		if(!parent)
+		{
+			this->mesh = MS<Mesh>(guiVerts, guiUVs);
+			this->shader = MS<Shader>(guiVertShader, guiFragShader);
+		}
+		else this->parent = parent;
+	}
+	
 	virtual ~Widget() = default;
 	
-	//The pure virtual functions need to be called by the user of this library at appropriate times
+	//These functions need to be called by the user of this library at appropriate times
 	virtual void render() = 0;
 	virtual void onResize(uint32_t newWidth, uint32_t newHeight) = 0;
 	virtual void onMouseUp(MouseButtons button, IR::vec2<int32_t> const &pos) {}
@@ -58,12 +68,13 @@ template <typename Key> struct Widget
 	
 	inline void addElement(SP<Widget> const &element)
 	{
-		this->childElements.push_back(element);
+		this->childWidgets.push_back(element);
 	}
 	
 	IR::vec2<int32_t> pos, size;
 	Observer connectionObserver;
-	SP<SharedAssets> assets;
+	SP<Shader> shader;
+	SP<Mesh> mesh;
 	uint64_t layer = 1;
 
 private:
@@ -72,7 +83,8 @@ private:
 		return IR::aabb2D<int32_t>(this->pos.x(), this->pos.x() + this->size.x(), this->pos.y() - this->size.y(), this->pos.y());
 	}
 	
-	std::vector<SP<Widget>> childElements;
+	std::vector<SP<Widget>> childWidgets;
+	WP<Widget> parent;
 	SP<Layout> layout;
 };
 
@@ -101,14 +113,13 @@ struct FlexBoxLayout : public Layout
 /// 
 template <typename BASE> struct Pane : public BASE
 {
-	inline static SP<Pane> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<Pane> create(SP<BASE> parent)
 	{
-		return MS<Pane>(assets);
+		return MS<Pane>(parent);
 	}
 	
-	inline Pane(SP<SharedAssets> assets)
+	inline Pane(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -141,14 +152,13 @@ private:
 /// 
 template <typename BASE> struct Button : public BASE
 {
-	inline static SP<Button> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<Button> create(SP<BASE> parent)
 	{
-		return MS<Button>(assets);
+		return MS<Button>(parent);
 	}
 	
-	inline Button(SP<SharedAssets> assets)
+	inline Button(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -234,14 +244,13 @@ private:
 /// 
 template <typename BASE> struct Checkbox : public BASE
 {
-	inline static SP<Checkbox> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<Checkbox> create(SP<BASE> parent)
 	{
-		return MS<Checkbox>(assets);
+		return MS<Checkbox>(parent);
 	}
 	
-	inline Checkbox(SP<SharedAssets> assets)
+	inline Checkbox(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -309,27 +318,25 @@ private:
 /// A bank of radio buttons that are linked together, eg only one can be selected at a time
 template <typename BASE> struct RadioButtonBank : public BASE
 {
-	inline static SP<RadioButtonBank> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<RadioButtonBank> create(SP<BASE> parent)
 	{
-		return MS<RadioButtonBank>(assets);
+		return MS<RadioButtonBank>(parent);
 	}
 	
-	inline RadioButtonBank(SP<SharedAssets> assets)
+	inline RadioButtonBank(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
 	struct RadioButton : public BASE
 	{
-		inline static SP<RadioButton> create(SP<SharedAssets> assets) //should I do this?
+		inline static SP<RadioButton> create(SP<BASE> parent)
 		{
-			return MS<RadioButton>(assets);
+			return MS<RadioButton>(parent);
 		}
 		
-		inline RadioButton(SP<SharedAssets> assets)
+		inline RadioButton(SP<BASE> parent) : BASE(parent)
 		{
-			this->assets = assets;
 			//TODO create pixmaps
 		}
 		
@@ -404,14 +411,13 @@ template <typename BASE> struct RadioButtonBank : public BASE
 /// An adjustable slider widget
 template <typename BASE> struct Slider : public BASE
 {
-	inline static SP<Slider> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<Slider> create(SP<BASE> parent)
 	{
-		return MS<Slider>(assets);
+		return MS<Slider>(parent);
 	}
 	
-	inline Slider(SP<SharedAssets> assets)
+	inline Slider(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -482,14 +488,13 @@ private:
 /// A dropdown selection widget
 template <typename BASE> struct DropdownMenu : public BASE
 {
-	inline static SP<DropdownMenu> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<DropdownMenu> create(SP<BASE> parent)
 	{
-		return MS<DropdownMenu>(assets);
+		return MS<DropdownMenu>(parent);
 	}
 	
-	inline DropdownMenu(SP<SharedAssets> assets)
+	inline DropdownMenu(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -565,14 +570,13 @@ private:
 /// A menu bar with dropdown menus, eg File Edit Help etc
 template <typename BASE> struct MenuBar : public BASE
 {
-	inline static SP<MenuBar> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<MenuBar> create(SP<BASE> parent)
 	{
-		return MS<MenuBar>(assets);
+		return MS<MenuBar>(parent);
 	}
 	
-	inline MenuBar(SP<SharedAssets> assets)
+	inline MenuBar(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -640,14 +644,13 @@ private:
 /// A selectable item in a dropdown or menu bar
 template <typename BASE> struct MenuItem : public BASE
 {
-	inline static SP<MenuItem> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<MenuItem> create(SP<BASE> parent)
 	{
-		return MS<MenuItem>(assets);
+		return MS<MenuItem>(parent);
 	}
 	
-	inline MenuItem(SP<SharedAssets> assets)
+	inline MenuItem(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -695,14 +698,13 @@ template <typename BASE> struct MenuItem : public BASE
 /// A text label
 template <typename BASE> struct Label : public BASE
 {
-	inline static SP<Label> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<Label> create(SP<BASE> parent)
 	{
-		return MS<Label>(assets);
+		return MS<Label>(parent);
 	}
 	
-	inline Label(SP<SharedAssets> assets)
+	inline Label(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -736,14 +738,13 @@ private:
 /// 
 template <typename BASE> struct TextLine : public BASE
 {
-	inline static SP<TextLine> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<TextLine> create(SP<BASE> parent)
 	{
-		return MS<TextLine>(assets);
+		return MS<TextLine>(parent);
 	}
 	
-	inline TextLine(SP<SharedAssets> assets)
+	inline TextLine(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	
@@ -808,14 +809,13 @@ private:
 /// 
 template <typename BASE> struct TextArea : public BASE
 {
-	inline static SP<TextArea> create(SP<SharedAssets> assets) //should I do this?
+	inline static SP<TextArea> create(SP<BASE> parent)
 	{
-		return MS<TextArea>(assets);
+		return MS<TextArea>(parent);
 	}
 	
-	inline TextArea(SP<SharedAssets> assets)
+	inline TextArea(SP<BASE> parent) : BASE(parent)
 	{
-		this->assets = assets;
 		//TODO create pixmaps
 	}
 	

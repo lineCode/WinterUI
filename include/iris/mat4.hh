@@ -20,7 +20,7 @@ namespace Iris
 		mat4x4<T>() = default;
 		
 		/// Specialization conversion constructor
-		template<typename U> mat4x4<T>(mat4x4<U> const &other)
+		template<typename U> constexpr mat4x4<T>(mat4x4<U> const &other)
 		{
 			this->data[0][0] = other.data[0][0];
 			this->data[0][1] = other.data[0][1];
@@ -40,7 +40,7 @@ namespace Iris
 			this->data[3][3] = other.data[3][3];
 		}
 		
-		inline mat4x4<T>(T x1In, T y1In, T z1In, T w1In,
+		constexpr inline mat4x4<T>(T x1In, T y1In, T z1In, T w1In,
 		                 T x2In, T y2In, T z2In, T w2In,
 		                 T x3In, T y3In, T z3In, T w3In,
 		                 T x4In, T y4In, T z4In, T w4In)
@@ -64,7 +64,7 @@ namespace Iris
 		}
 		
 		/// Convert a quaternion to a 4x4 matrix
-		inline mat4x4<T>(quat<T> const &in)
+		constexpr inline mat4x4<T>(quat<T> const &in)
 		{
 			T sqx = in.data[0] * in.data[0];
 			T sqy = in.data[1] * in.data[1];

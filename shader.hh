@@ -32,43 +32,6 @@ bool _checkShader(GLenum status, uint32_t handle, std::string const &filePath = 
 
 struct Shader
 {
-	inline Shader(std::string const &vertPath, std::string const &fragPath)
-	{
-		char const *vertShader = readTextFile(vertPath).data();
-		char const *fragShader = readTextFile(fragPath).data();
-		uint32_t fragHandle = glCreateShader(GL_FRAGMENT_SHADER), vertHandle = glCreateShader(GL_VERTEX_SHADER);
-		this->shaderHandle = glCreateProgram();
-		glShaderSource(vertHandle, 1, &vertShader, nullptr);
-		glShaderSource(fragHandle, 1, &fragShader, nullptr);
-		glCompileShader(vertHandle);
-		if(!_checkShader(GL_COMPILE_STATUS, vertHandle, vertPath)) return;
-		glCompileShader(fragHandle);
-		if(!_checkShader(GL_COMPILE_STATUS, fragHandle, fragPath)) return;
-		glAttachShader(this->shaderHandle, vertHandle);
-		glAttachShader(this->shaderHandle, fragHandle);
-		glLinkProgram(this->shaderHandle);
-		if(!_checkShader(GL_LINK_STATUS, this->shaderHandle)) return;
-		glDetachShader(this->shaderHandle, vertHandle);
-		glDetachShader(this->shaderHandle, fragHandle);
-		glDeleteShader(vertHandle);
-		glDeleteShader(fragHandle);
-	}
-	
-	inline explicit Shader(std::string const &compPath)
-	{
-		char const *compShader = readTextFile(compPath).data();
-		uint32_t compHandle = glCreateShader(GL_COMPUTE_SHADER);
-		this->shaderHandle = glCreateProgram();
-		glShaderSource(compHandle, 1, &compShader, nullptr);
-		glCompileShader(compHandle);
-		if(!_checkShader(GL_COMPILE_STATUS, compHandle, compPath)) return;
-		glAttachShader(this->shaderHandle, compHandle);
-		glLinkProgram(this->shaderHandle);
-		if(!_checkShader(GL_LINK_STATUS, this->shaderHandle)) return;
-		glDetachShader(this->shaderHandle, compHandle);
-		glDeleteShader(compHandle);
-	}
-	
 	inline Shader(char const *vertSource, char const *fragSource)
 	{
 		uint32_t vertHandle = glCreateShader(GL_VERTEX_SHADER), fragHandle = glCreateShader(GL_FRAGMENT_SHADER);

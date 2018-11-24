@@ -16,7 +16,7 @@ namespace Iris
 		
 		mat3x3<T>() = default;
 		
-		template<typename U> mat3x3<T>(mat3x3<U> const &in)
+		template<typename U> constexpr mat3x3<T>(mat3x3<U> const &in)
 		{
 			this->data[0][0] = in[0][0];
 			this->data[0][1] = in[0][1];
@@ -29,7 +29,7 @@ namespace Iris
 			this->data[2][2] = in[2][2];
 		}
 		
-		inline mat3x3<T>(mat4x4<T> const &in)
+		constexpr inline mat3x3<T>(mat4x4<T> const &in)
 		{
 			this->data[0][0] = in[0][0];
 			this->data[0][1] = in[0][1];

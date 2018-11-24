@@ -9,6 +9,8 @@
 #if defined(_WIN32)
 #include <windows.h>
 #include <libloaderapi.h>
+#include <vector>
+
 #elif defined(__linux__)
 #include <sys/stat.h>
 #include <unistd.h>
@@ -123,3 +125,23 @@ private:
 	std::atomic_flag accessor {false};
 	std::atomic_flag writeSem {false};
 };
+
+inline std::vector<std::string> splitStr(std::string const &input, char const &splitOn, bool const &removeMatches)
+{
+	std::vector<std::string> out;
+	if(input.begin() == input.end()) return out;
+	std::string::const_iterator iEnd = input.begin(), iBegin = iEnd;
+	while(iEnd < input.end())
+	{
+		if(*iEnd == splitOn)
+		{
+			if(iBegin != iEnd) out.push_back(std::string{iBegin, removeMatches ? iEnd : iEnd + 1});
+			iBegin = ++iEnd;
+			continue;
+		}
+		iEnd++;
+	}
+	if(*iEnd == splitOn && iEnd != iBegin) out.push_back(std::string{iBegin, removeMatches ? iEnd : iEnd + 1});
+	else if(iBegin != iEnd) out.push_back(std::string{iBegin, iEnd});
+	return out;
+}

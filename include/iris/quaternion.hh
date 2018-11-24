@@ -56,7 +56,7 @@ namespace Iris
 		inline quat<T>() = default;
 		
 		/// Construct a quaternion out of given values
-		inline quat<T>(T xIn, T yIn, T zIn, T wIn)
+		constexpr inline quat<T>(T xIn, T yIn, T zIn, T wIn)
 		{
 			this->data[0] = xIn;
 			this->data[1] = yIn;
@@ -65,7 +65,7 @@ namespace Iris
 		}
 		
 		/// Convert a 4x4 matrix to a quaternion (this discards all non-rotation/orientation data)
-		inline quat<T>(mat4x4<T> const &in)
+		constexpr inline quat<T>(mat4x4<T> const &in)
 		{
 			T trace = in[0][0] + in[1][1] + in[2][2];
 			if (trace > 0)

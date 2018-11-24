@@ -11,7 +11,7 @@ namespace Iris
 	{
 		linesegment2D() = default;
 		
-		inline linesegment2D(vec2<T> const &p1, vec2<T> const &p2) : point1(p1), point2(p2) {}
+		constexpr inline linesegment2D(vec2<T> const &p1, vec2<T> const &p2) : point1(p1), point2(p2) {}
 		
 		/// Reconstruct this line segment
 		inline void construct(vec2<T> const &p1, vec2<T> const &p2)
@@ -51,7 +51,7 @@ namespace Iris
 	{
 		aabb2D() = default;
 		
-		inline aabb2D(T minX, T maxX, T minY, T maxY)
+		constexpr inline aabb2D(T minX, T maxX, T minY, T maxY)
 		{
 			this->minX = minX;
 			this->maxX = maxX;
@@ -61,7 +61,7 @@ namespace Iris
 			this->centerY = (maxY - minY) / static_cast<T>(2.0);
 		}
 		
-		inline aabb2D(T minX, T maxX, T minY, T maxY, T centerX, T centerY)
+		constexpr inline aabb2D(T minX, T maxX, T minY, T maxY, T centerX, T centerY)
 		{
 			this->minX = minX;
 			this->maxX = maxX;
@@ -134,7 +134,7 @@ namespace Iris
 	{
 		aabb3D() = default;
 		
-		inline aabb3D(T minX, T maxX, T minY, T maxY, T minZ, T maxZ) : minX(minX), maxX(maxX), minY(minY), maxY(maxY), minZ(minZ), maxZ(maxZ)
+		constexpr inline aabb3D(T minX, T maxX, T minY, T maxY, T minZ, T maxZ) : minX(minX), maxX(maxX), minY(minY), maxY(maxY), minZ(minZ), maxZ(maxZ)
 		{}
 		
 		/// Construct/reconstruct this AABB
@@ -177,7 +177,7 @@ namespace Iris
 	{
 		circle() = default;
 		
-		inline circle(vec2<T> const &center, T radius)
+		constexpr inline circle(vec2<T> const &center, T radius)
 		{
 			this->center = center;
 			this->radius = radius;

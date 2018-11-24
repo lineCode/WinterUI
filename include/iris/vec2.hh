@@ -21,19 +21,19 @@ namespace Iris
 		
 		inline vec2<T>() = default;
 		
-		template<typename U> vec2<T>(vec2<U> const &other)
+		template<typename U> constexpr vec2<T>(vec2<U> const &other)
 		{
 			this->data[0] = other.data[0];
 			this->data[1] = other.data[1];
 		}
 		
-		inline vec2<T>(T x, T y)
+		constexpr inline vec2<T>(T x, T y)
 		{
 			this->data[0] = x;
 			this->data[1] = y;
 		}
 		
-		inline vec2<T>(T const &scalar)
+		constexpr inline vec2<T>(T const &scalar)
 		{
 			this->data[0] = scalar;
 			this->data[1] = scalar;

@@ -8,35 +8,21 @@
 
 struct Mesh
 {
-	inline Mesh(std::initializer_list<IR::vec3<float>> const &verts, std::initializer_list<IR::vec2<float>> const &uvs, bool storeVerts)
+	inline Mesh(std::array<float, 12> const &verts, std::array<float, 8> const &uvs)
 	{
 		size_t constexpr vertexStride = 3 * sizeof(float);
 		size_t constexpr uvStride = 2 * sizeof(float);
-		
-		std::vector<float> vertList, uvList;
-		for(auto const &vert : verts)
-		{
-			vertList.push_back(vert.x());
-			vertList.push_back(vert.y());
-			vertList.push_back(vert.z());
-		}
-		for(auto const &uv : uvs)
-		{
-			uvList.push_back(uv.x());
-			uvList.push_back(uv.y());
-		}
-		
 		glCreateVertexArrays(1, &this->vao);
 		glCreateBuffers(1, &this->vboV);
 		glCreateBuffers(1, &this->vboU);
 		
-		glNamedBufferData(this->vboV, vertList.size() * sizeof(float), vertList.data(), GL_STATIC_DRAW);
+		glNamedBufferData(this->vboV, 12 * sizeof(float), verts.data(), GL_STATIC_DRAW);
 		glVertexArrayAttribBinding(this->vao, 0, 0);
 		glVertexArrayVertexBuffer(this->vao, 0, this->vboV, 0, vertexStride);
 		glEnableVertexArrayAttrib(this->vao, 0);
 		glVertexArrayAttribFormat(this->vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
 		
-		glNamedBufferData(this->vboU, uvList.size() * sizeof(float), uvList.data(), GL_STATIC_DRAW);
+		glNamedBufferData(this->vboU, 8 * sizeof(float), uvs.data(), GL_STATIC_DRAW);
 		glVertexArrayAttribBinding(this->vao, 1, 1);
 		glVertexArrayVertexBuffer(this->vao, 1, this->vboU, 0, uvStride);
 		glEnableVertexArrayAttrib(this->vao, 1);

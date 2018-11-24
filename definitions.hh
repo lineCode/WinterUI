@@ -7,3 +7,5 @@ template <typename T, typename... Args> SP<T> MS(Args&&... args) {return std::ma
 
 template <typename T> using UP = std::unique_ptr<T>;
 template <typename T, typename... Args> UP<T> MU(Args&&... args) {return std::make_unique<T>(std::forward<Args&&>(args)...);}
+
+template <typename T> using WP = std::weak_ptr<T>;
