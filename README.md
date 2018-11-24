@@ -1,19 +1,23 @@
-# WinterGUI
-A header-only C++17 and OpenGL 4.5 GUI library
+# WinterUI
+A header-only C++17 and OpenGL 4.5 UI library
 -
-WinterGUI must be included and used <b>after</b> OpenGL symbols have been loaded.
-Additionally, you must provide an FBO for the GUI to render to.
+To use WinterUI, include WinterUI.hh: no other includes are needed.
+WinterUI must be included and used <b>after</b> OpenGL symbols have been loaded.
+Additionally, you must provide a color FBO handle to the Widget's render function for the GUI to draw to.
 
 To allow use of any input library without conversion tables, Widget must be templated with your libraries' scancode enum, and widgets must be templated with the templated Widget,
 eg for SDL2:
 ```cpp
 using Widget_t = Widget<SDL_Scancode>;
 using Pane_t = Pane<Widget_t>;
-std::shared_ptr<Pane_t> pane = Pane_t::create(sharedAssets);
+std::shared_ptr<Pane_t> pane = Pane_t::create(nullptr);
 ```
-Prior to rendering, make sure to disable depth testing if on, or you may get unexpected results.
+Widgets take a shared_ptr to their parent widget when created to form a bidirectional heirarchy, and importantly when nullptr is given, start a new heirarchy.
+This is expensive, as it creates a new mesh and shader object, so ensure this is done only when intended.
 
-Classes derived from Widget have several functions which you must call at the appropriate times:
+Prior to rendering, make sure depth testing is off, or you may get unexpected results.
+
+Classes derived from Widget have several functions which you must call in response to various events and in your game loop:
 - render() must be called on the thread that owns the OpenGL context
 - onResize() should be called whenever the context's size changes
 - Your windowing/input library (eg SDL2) should provide these events, use the info it gives you to call the following events:

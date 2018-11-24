@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FORTIFY_SOURCE=2 -mmitigate-rop -fsta
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--dynamicbase -Wl,--nxcompat -Wl,--export-all-symbols")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--high-entropy-va")
 
-project(WinterGUI)
+project(WinterUI)
 include_directories(include)
 set(SRC
 		definitions.hh
@@ -16,7 +16,7 @@ set(SRC
 		signal.hh
 		util.hh
 		widgets.hh
-		WinterGUI.hh)
+		WinterUI.hh)
 add_executable(${PROJECT_NAME} ${SRC} test.cc)
 target_link_libraries(${PROJECT_NAME}
 		${CMAKE_SOURCE_DIR}/libs/libpango-1.0.dll.a

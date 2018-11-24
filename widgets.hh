@@ -3,7 +3,7 @@
 #include "signal.hh"
 #include "definitions.hh"
 #include "pixmap.hh"
-#include "WinterGUI.hh"
+#include "WinterUI.hh"
 #include "sharedAssets.hh"
 
 #include <functional>
@@ -50,7 +50,6 @@ template <typename Key> struct Widget
 	
 	virtual ~Widget() = default;
 	
-	//These functions need to be called by the user of this library at appropriate times
 	virtual void render() = 0;
 	virtual void onResize(uint32_t newWidth, uint32_t newHeight) = 0;
 	virtual void onMouseUp(MouseButtons button, IR::vec2<int32_t> const &pos) {}
@@ -66,9 +65,9 @@ template <typename Key> struct Widget
 		this->layout = layout;
 	}
 	
-	inline void addElement(SP<Widget> const &element)
+	inline void addWidget(SP<Widget> const &widget)
 	{
-		this->childWidgets.push_back(element);
+		this->childWidgets.push_back(widget);
 	}
 	
 	IR::vec2<int32_t> pos, size;
