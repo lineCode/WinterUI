@@ -10,10 +10,8 @@ include_directories(include)
 set(SRC
 		definitions.hh
 		glad.c
-		mesh.hh
 		observer.hh
 		pixmap.hh
-		shader.hh
 		sharedAssets.hh
 		signal.hh
 		util.hh
