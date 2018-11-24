@@ -194,3 +194,75 @@ struct Shader
 private:
 	uint32_t shaderHandle = 0;
 };
+
+struct FBO
+{
+	inline FBO()
+	{
+		int dfSz[4];
+		glGetIntegerv(GL_VIEWPORT, dfSz);
+		this->width = static_cast<uint32_t>(dfSz[2]);
+		this->height = static_cast<uint32_t>(dfSz[3]);
+		glCreateFramebuffers(1, &this->handle);
+		this->bindFBO();
+		glViewport(0, 0, this->width, this->height);
+		glScissor(0, 0, this->width, this->height);
+		glCreateTextures(GL_TEXTURE_2D, 1, &this->colorHandle);
+		glTextureStorage2D(this->colorHandle, 1, GL_RGBA32F, this->width, this->height);
+		glNamedFramebufferTexture(this->handle, GL_COLOR_ATTACHMENT0, this->colorHandle, 0);
+		std::vector<GLenum> drawBuffers;
+		drawBuffers.emplace_back(GL_COLOR_ATTACHMENT0);
+		glNamedFramebufferDrawBuffers(this->handle, static_cast<int32_t>(drawBuffers.size()), drawBuffers.data());
+		GLenum error = glCheckNamedFramebufferStatus(this->handle, GL_FRAMEBUFFER);
+		if(error != GL_FRAMEBUFFER_COMPLETE)
+		{
+			switch(error)
+			{
+				case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: printf("attachment\n"); break;
+				case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT: printf("dimensions\n"); break;
+				case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: printf("missing attachment\n"); break;
+				case GL_FRAMEBUFFER_UNSUPPORTED: printf("fbo not supported\n"); break;
+				default: break;
+			}
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	
+	inline ~FBO()
+	{
+		glDeleteFramebuffers(1, &this->handle);
+		glDeleteTextures(1, &this->colorHandle);
+	}
+	
+	inline void regen(uint32_t width, uint32_t height)
+	{
+		this->width = width;
+		this->height = height;
+		glDeleteFramebuffers(1, &this->handle);
+		glDeleteTextures(1, &this->colorHandle);
+		glCreateFramebuffers(1, &this->handle);
+		this->bindFBO();
+		glViewport(0, 0, this->width, this->height);
+		glScissor(0, 0, this->width, this->height);
+		glCreateTextures(GL_TEXTURE_2D, 1, &this->colorHandle);
+		glTextureStorage2D(this->colorHandle, 1, GL_RGBA32F , this->width, this->height);
+		glNamedFramebufferTexture(this->handle, GL_COLOR_ATTACHMENT0, this->colorHandle, 0);
+		std::vector<GLenum> drawBuffers;
+		drawBuffers.emplace_back(GL_COLOR_ATTACHMENT0);
+		glNamedFramebufferDrawBuffers(this->handle, static_cast<int32_t>(drawBuffers.size()), drawBuffers.data());
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	
+	inline void bindFBO()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, this->handle);
+	}
+	
+	inline void bindTexture(uint32_t target)
+	{
+		glBindTextureUnit(target, this->colorHandle);
+	}
+	
+	uint32_t handle = 0, colorHandle = 0;
+	uint32_t width, height;
+};

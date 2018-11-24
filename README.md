@@ -91,3 +91,4 @@ OpenGL symbols used:
 - glBindVertexArray
 - GL_STATIC_DRAW
 - GL_FLOAT
+- glGetIntegerv

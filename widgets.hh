@@ -44,6 +44,7 @@ template <typename Key> struct Widget
 		{
 			this->mesh = MS<Mesh>(guiVerts, guiUVs);
 			this->shader = MS<Shader>(guiVertShader, guiFragShader);
+			this->fbo = MS<FBO>();
 		}
 		else this->parent = parent;
 	}
@@ -70,21 +71,22 @@ template <typename Key> struct Widget
 		this->childWidgets.push_back(widget);
 	}
 	
-	IR::vec2<int32_t> pos, size;
-	Observer connectionObserver;
-	SP<Shader> shader;
-	SP<Mesh> mesh;
-	uint64_t layer = 1;
-
-private:
 	inline IR::aabb2D<int32_t> getHitbox()
 	{
 		return IR::aabb2D<int32_t>(this->pos.x(), this->pos.x() + this->size.x(), this->pos.y() - this->size.y(), this->pos.y());
 	}
 	
+	IR::vec2<int32_t> pos, size;
+	Observer connectionObserver;
+	uint64_t layer = 1;
+
+private:
 	std::vector<SP<Widget>> childWidgets;
 	WP<Widget> parent;
 	SP<Layout> layout;
+	SP<Shader> shader;
+	SP<Mesh> mesh;
+	SP<FBO> fbo;
 };
 
 /*Layouts--------------------------------------------------------------------------------------------------------------------------------*/
