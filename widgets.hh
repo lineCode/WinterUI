@@ -127,8 +127,8 @@ template <typename BASE> struct Pane : public BASE
 		IR::mat4x4<float> MVP = IR::mat4x4<float>::modelViewProjectionMatrix(IR::mat4x4<float>::modelMatrix({this->pos, this->layer}, {}, {this->size, 1}),
 		                                                                     IR::mat4x4<float>::viewMatrix({}, {}),
 		                                                                     IR::mat4x4<float>::orthoProjectionMatrix(0, contextSize.x(), contextSize.y(), 0, 1, 100));
-		this->assets->shader->bind();
-		this->assets->mesh->bind();
+		this->shader->bind();
+		this->mesh->bind();
 		this->pixmap->bind();
 		this->assets->shader->sendMat4f("mvp", &MVP[0][0]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
