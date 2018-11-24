@@ -130,7 +130,7 @@ template <typename BASE> struct Pane : public BASE
 		this->shader->bind();
 		this->mesh->bind();
 		this->pixmap->bind();
-		this->assets->shader->sendMat4f("mvp", &MVP[0][0]);
+		this->shader->sendMat4f("mvp", &MVP[0][0]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 	
