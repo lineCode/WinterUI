@@ -1,5 +1,5 @@
 # WinterUI
-A header-only C++17 and OpenGL 4.5 UI library
+A header-only C++17 and OpenGL 3.3/4.5 UI library
 -
 To start using WinterUI, you must first define what version of OpenGL you're using, then include WinterUI.hh:
 ```cpp
