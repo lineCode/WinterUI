@@ -1,26 +1,35 @@
 # WinterUI
 A header-only C++17 and OpenGL 4.5 UI library
 -
-To use WinterUI, include WinterUI.hh: no other includes are needed.
-WinterUI must be included and used <b>after</b> OpenGL symbols have been loaded.
-Additionally, you must provide a color FBO handle to the Widget's render function for the GUI to draw to.
+To start using WinterUI, you must first define what version of OpenGL you're using, then include WinterUI.hh:
+```cpp
+#define WUI_GL45
+#include WinterUI.hh
+```
+WinterUI internally may use 1 of 2 versions of OpenGL, 4.5 and 3.3. (for compatibility with triassic period hardware)
+Defining any version 4.5 and higher will alias to 4.5, and any define 3.3 and higher and under 4.5 will alias to 3.3.
+To see what versions defines exist for, see version.hh
 
-To allow use of any input library without conversion tables, Widget must be templated with your libraries' scancode enum, and widgets must be templated with the templated Widget,
+WinterUI must be used <b>after</b> OpenGL symbols have been loaded.
+You may use any function loading library as long as it provides the symbols listed below.
+
+To allow use of any input library without conversion tables, Widget must be templated with your input libraries' scancode enum, and widgets must be templated with the templated Widget,
 eg for SDL2:
 ```cpp
 using Widget_t = Widget<SDL_Scancode>;
 using Pane_t = Pane<Widget_t>;
 std::shared_ptr<Pane_t> pane = Pane_t::create(nullptr);
 ```
-Widgets take a shared_ptr to their parent widget when created to form a bidirectional heirarchy, and importantly when nullptr is given, start a new heirarchy.
-This is expensive, as it creates a new mesh and shader object, so ensure this is done only when intended.
+Widgets take a shared_ptr to their parent widget when created to form a bidirectional heirarchy, and importantly when nullptr is given, to start a new heirarchy.
+This is expensive, as it creates a new mesh, shader, and FBO object that the new heirarchy will share, so ensure this is done only when intended.
 
 Prior to rendering, make sure depth testing is off, or you may get unexpected results.
 
-Classes derived from Widget have several functions which you must call in response to various events and in your game loop:
+Classes derived from Widget have several functions which you must call in response to various events in your game loop:
 - render() must be called on the thread that owns the OpenGL context
 - onResize() should be called whenever the context's size changes
-- Your windowing/input library (eg SDL2) should provide these events, use the info it gives you to call the following events:
+
+Your windowing/input library (eg SDL2) should provide the following events, use the info it gives you to call them:
 - onMouseUp()
 - onMouseDown()
 - onKeyUp()
@@ -92,3 +101,4 @@ OpenGL symbols used:
 - GL_STATIC_DRAW
 - GL_FLOAT
 - glGetIntegerv
+- TODO add GL 3.3 functions
