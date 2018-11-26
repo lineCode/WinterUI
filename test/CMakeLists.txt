@@ -5,14 +5,19 @@ if(WIN32 OR WIN64)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FORTIFY_SOURCE=2 -mmitigate-rop -fstack-protector-strong -fPIE -static -std=c++17 -Wall -Wextra -Wpedantic -Wformat-security -Wno-unused")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--dynamicbase -Wl,--nxcompat -Wl,--export-all-symbols")
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--high-entropy-va -Wl,-z,--relro -Wl,-z,--now")
-elseif(UNIX OR APPLE)
+elseif(UNIX)
 	set(ARCH "x86_64")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FORTIFY_SOURCE=2 -mmitigate-rop -fstack-protector-strong -fPIE -std=c++17 -Wall -Wextra -Wpedantic -Wformat-security -Wno-unused")
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,high-entropy-va -Wl,-z,relro -Wl,-z,now")
 endif()
 
 project(UITest)
+if(WIN32 OR WIN64)
 include_directories(include)
+elseif(UNIX)
+	find_package(SDL2 REQUIRED)
+	include_directories(include ${SDL2_INCLUDE_DIRS})
+endif()
 set(SRC
 		glad.c
 		test.cc)
@@ -22,8 +27,8 @@ if(WIN32 OR WIN64)
 			${CMAKE_SOURCE_DIR}/libs/libSDL2.dll.a
 			${CMAKE_SOURCE_DIR}/libs/libpango-1.0.dll.a
 			${CMAKE_SOURCE_DIR}/libs/libpangowin32-1.0.dll.a)
-elseif(UNIX OR APPLE)
-	target_link_libraries(${PROJECT_NAME} dl sdl2 pango cairo pangocairo)
+elseif(UNIX)
+	target_link_libraries(${PROJECT_NAME} dl SDL2 pango-1.0 pangocairo-1.0 cairo)
 endif()
 
 if(WIN32 OR WIN64)

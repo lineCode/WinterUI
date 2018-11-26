@@ -26,8 +26,6 @@ static constexpr float guiUVs[8] =
 	0.0f, 1.0f,
 };
 
-#define _USEGL33
-
 #if defined(_USEGL45)
 static constexpr char const *guiVertShader =
 R"(#version 450
