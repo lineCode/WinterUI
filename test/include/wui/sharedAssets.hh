@@ -26,8 +26,6 @@ static constexpr float guiUVs[8] =
 	0.0f, 1.0f,
 };
 
-#define _USEGL33
-
 #if defined(_USEGL45)
 static constexpr char const *guiVertShader =
 R"(#version 450
@@ -457,15 +455,6 @@ private:
 	uint32_t shaderHandle = 0;
 };
 
-inline void checkError(std::string const &in)
-{
-	int32_t error = glGetError();
-	if(error != GL_NO_ERROR)
-	{
-		printf("%s: %i\n", in.data(), error);
-	}
-}
-
 struct FBO
 {
 	inline FBO()
@@ -485,7 +474,6 @@ struct FBO
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->colorHandle, 0);
 		GLuint drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
 		glDrawBuffers(1, drawBuffers);
-		checkError("Post drawBuffers");
 		GLenum error = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if(error != GL_FRAMEBUFFER_COMPLETE)
 		{

@@ -5,12 +5,11 @@
 #include <fstream>
 #include <locale>
 #include <codecvt>
+#include <vector>
 
 #if defined(_WIN32)
 #include <windows.h>
 #include <libloaderapi.h>
-#include <vector>
-
 #elif defined(__linux__)
 #include <sys/stat.h>
 #include <unistd.h>
