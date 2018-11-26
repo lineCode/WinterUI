@@ -8,8 +8,6 @@
 #include <iris/mat3.hh>
 #include <iris/mat4.hh>
 
-#include <glad/glad.h>
-
 static constexpr float guiVerts[12] =
 {
 	1.0f, 0.0f, 0.0f,
