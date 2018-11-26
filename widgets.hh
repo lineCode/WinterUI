@@ -874,3 +874,76 @@ template <typename BASE> struct TextArea : public BASE
 private:
 	SP<Pixmap> pixmapBackground, pixmapBorder;
 };
+
+/// A window that can be moved and resized within the GUI
+template <class BASE> struct FreeWindow : public BASE
+{
+	inline static SP<FreeWindow> create(SP<BASE> parent)
+	{
+		return MS<FreeWindow>(parent);
+	}
+	
+	inline FreeWindow(SP<BASE> parent) : BASE(parent)
+	{
+		//TODO create pixmaps
+	}
+	
+	inline void render() override
+	{
+		
+	}
+	
+	inline void onResize(uint32_t newWidth, uint32_t newHeight) override
+	{
+		
+	}
+	
+	inline void onMouseUp(MouseButtons button, IR::vec2<int32_t> const &pos) override
+	{
+		
+	}
+	
+	inline void onMouseDown(MouseButtons button, IR::vec2<int32_t> const &pos) override
+	{
+		
+	}
+	
+	inline void onMouseMove(IR::vec2<int32_t> const &newPos) override
+	{
+		
+	}
+	
+	inline void onTextInput(std::string const &input) override
+	{
+		
+	}
+	
+	enum struct PixmapElem
+	{
+		BACKGROUND, BORDER, TOPBAR
+	};
+	
+	inline void customPixmap(PixmapElem elem, SP<Pixmap> const &pixmap)
+	{
+		switch(elem)
+		{
+			case PixmapElem::BACKGROUND:
+				this->pixmapBackground = pixmap;
+				break;
+			case PixmapElem::BORDER:
+				this->pixmapBorder = pixmap;
+				break;
+			case PixmapElem::TOPBAR:
+				this->pixmapTopBar = pixmap;
+				break;
+		}
+	}
+	
+	std::string titleText = "";
+	Signal<> hover {};
+	Signal<MouseButtons, bool> clicked {};
+	Signal<uint64_t> drag {};
+
+private:
+	SP<Pixmap> pixmapBackground, pixmapBorder, pixmapTopBar;
+};
