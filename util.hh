@@ -3,31 +3,7 @@
 #include <string>
 #include <atomic>
 #include <fstream>
-#include <locale>
-#include <codecvt>
 #include <vector>
-
-#if defined(_WIN32)
-#include <windows.h>
-#include <libloaderapi.h>
-#elif defined(__linux__)
-#include <sys/stat.h>
-#include <unistd.h>
-#endif
-
-std::string getCWD()
-{
-#if defined(_WIN32)
-	wchar_t rawdir[2048];
-	GetModuleFileNameW(nullptr, rawdir, 2048);
-	std::string exe_dir = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(std::wstring(rawdir));
-	return exe_dir.substr(0, exe_dir.find_last_of('\\'));
-#elif defined(__linux__)
-	char dir[2048];
-			getcwd(dir, 2048);
-			return {dir};
-#endif
-}
 
 std::string readTextFile(std::string const &filePath)
 {
