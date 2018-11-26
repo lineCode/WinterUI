@@ -47,6 +47,9 @@ int main()
 	if(!window) throw std::runtime_error("Window Setup: Failed to create a window");
 	SDL_GL_LoadLibrary(nullptr);
 	
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	context = SDL_GL_CreateContext(window);
 	if(!context) throw std::runtime_error("Window context setup: Failed to create an OpenGL context");
 	gladLoadGLLoader(SDL_GL_GetProcAddress);
