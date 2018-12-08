@@ -17,7 +17,7 @@ namespace Iris
 		             {0, 0, 1, 0},
 		             {0, 0, 0, 1}};
 		
-		mat4x4<T>() = default;
+		inline constexpr mat4x4<T>() = default;
 		
 		/// Specialization conversion constructor
 		template<typename U> constexpr mat4x4<T>(mat4x4<U> const &other)

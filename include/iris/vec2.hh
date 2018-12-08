@@ -19,7 +19,7 @@ namespace Iris
 		inline vec2<T> xx() const { return vec2<T>{this->data[0], this->data[0]}; }
 		inline vec2<T> yy() const { return vec2<T>{this->data[1], this->data[1]}; }
 		
-		inline vec2<T>() = default;
+		inline constexpr vec2<T>() = default;
 		
 		template<typename U> constexpr vec2<T>(vec2<U> const &other)
 		{

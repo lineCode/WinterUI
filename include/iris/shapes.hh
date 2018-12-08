@@ -9,9 +9,9 @@ namespace Iris
 	
 	template<typename T> struct linesegment2D
 	{
-		linesegment2D() = default;
+		inline constexpr linesegment2D() = default;
 		
-		constexpr inline linesegment2D(vec2<T> const &p1, vec2<T> const &p2) : point1(p1), point2(p2) {}
+		inline constexpr linesegment2D(vec2<T> const &p1, vec2<T> const &p2) : point1(p1), point2(p2) {}
 		
 		/// Reconstruct this line segment
 		inline void construct(vec2<T> const &p1, vec2<T> const &p2)
@@ -49,9 +49,9 @@ namespace Iris
 	/// 2-dimensional axis aligned bounding box
 	template<typename T> struct aabb2D
 	{
-		aabb2D() = default;
+		inline constexpr aabb2D() = default;
 		
-		constexpr inline aabb2D(T minX, T maxX, T minY, T maxY)
+		inline constexpr aabb2D(T minX, T maxX, T minY, T maxY)
 		{
 			this->minX = minX;
 			this->maxX = maxX;
@@ -61,7 +61,7 @@ namespace Iris
 			this->centerY = (maxY - minY) / static_cast<T>(2.0);
 		}
 		
-		constexpr inline aabb2D(T minX, T maxX, T minY, T maxY, T centerX, T centerY)
+		inline constexpr aabb2D(T minX, T maxX, T minY, T maxY, T centerX, T centerY)
 		{
 			this->minX = minX;
 			this->maxX = maxX;
@@ -132,9 +132,9 @@ namespace Iris
 	/// 3-dimensional axis aligned bounding box
 	template<typename T> struct aabb3D
 	{
-		aabb3D() = default;
+		inline constexpr aabb3D() = default;
 		
-		constexpr inline aabb3D(T minX, T maxX, T minY, T maxY, T minZ, T maxZ) : minX(minX), maxX(maxX), minY(minY), maxY(maxY), minZ(minZ), maxZ(maxZ)
+		inline constexpr aabb3D(T minX, T maxX, T minY, T maxY, T minZ, T maxZ) : minX(minX), maxX(maxX), minY(minY), maxY(maxY), minZ(minZ), maxZ(maxZ)
 		{}
 		
 		/// Construct/reconstruct this AABB
@@ -175,9 +175,9 @@ namespace Iris
 	/// A mathematical circle
 	template<typename T> struct circle
 	{
-		circle() = default;
+		inline constexpr circle() = default;
 		
-		constexpr inline circle(vec2<T> const &center, T radius)
+		inline constexpr circle(vec2<T> const &center, T radius)
 		{
 			this->center = center;
 			this->radius = radius;
@@ -261,7 +261,7 @@ namespace Iris
 	
 	template<typename T> struct capsule //TODO finish
 	{
-		capsule() = default;
+		inline constexpr capsule() = default;
 		//inline capsule() :  {}
 		
 		

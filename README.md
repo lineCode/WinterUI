@@ -6,7 +6,7 @@ To start using WinterUI, you must first define what version of OpenGL you're usi
 #define WUI_GL45
 #include WinterUI.hh
 ```
-WinterUI internally may use 1 of 2 versions of OpenGL, 4.5 and 3.3. (for compatibility with triassic period hardware)
+WinterUI internally may use 1 of 2 versions of OpenGL, 3.3 or 4.5.
 Defining any version 4.5 and higher will alias to 4.5, and any define 3.3 and higher and under 4.5 will alias to 3.3.
 To see what versions defines exist for, see version.hh
 

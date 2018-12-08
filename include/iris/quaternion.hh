@@ -53,7 +53,7 @@ namespace Iris
 			return this->data[3];
 		}
 		
-		inline quat<T>() = default;
+		inline constexpr quat<T>() = default;
 		
 		/// Construct a quaternion out of given values
 		constexpr inline quat<T>(T xIn, T yIn, T zIn, T wIn)

@@ -14,7 +14,7 @@ namespace Iris
 		             {0, 1, 0},
 		             {0, 0, 1}};
 		
-		mat3x3<T>() = default;
+		inline constexpr mat3x3<T>() = default;
 		
 		template<typename U> constexpr mat3x3<T>(mat3x3<U> const &in)
 		{

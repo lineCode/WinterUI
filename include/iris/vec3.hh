@@ -154,7 +154,7 @@ namespace Iris
 		inline vec2<T> zx() const { return vec2<T>{this->data[2], this->data[0]}; }
 		inline vec2<T> zy() const { return vec2<T>{this->data[2], this->data[1]}; }
 		
-		inline vec3<T>() = default;
+		inline constexpr vec3<T>() = default;
 		
 		template<typename U> constexpr vec3<T>(vec3<U> const &other)
 		{
