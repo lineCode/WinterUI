@@ -171,7 +171,7 @@ namespace Iris
 		/// Add a scalar number to this v4
 		inline vec4<T> operator+(T const &scalar) const
 		{
-			return vec4<T>{this->data[0] + scalar, this->data[1] + scalar, this->data[2] + scalar, this->data[3] + scalar};
+			return vec4<T>{static_cast<T>(this->data[0] + scalar), static_cast<T>(this->data[1] + scalar), static_cast<T>(this->data[2] + scalar), static_cast<T>(this->data[3] + scalar)};
 		}
 		
 		/// Subtract this v4 from another
@@ -183,7 +183,7 @@ namespace Iris
 		/// Subtract a scalar number from this v4
 		inline vec4<T> operator-(T const &scalar) const
 		{
-			return vec4<T>{this->data[0] - scalar, this->data[1] - scalar, this->data[2] - scalar, this->data[3] - scalar};
+			return vec4<T>{static_cast<T>(this->data[0] - scalar), static_cast<T>(this->data[1] - scalar), static_cast<T>(this->data[2] - scalar), static_cast<T>(this->data[3] - scalar)};
 		}
 		
 		/// Negate this v4
@@ -201,7 +201,7 @@ namespace Iris
 		/// Multiply this v4 by a scalar number
 		inline vec4<T> operator*(T scalar) const
 		{
-			return vec4<T>{this->data[0] * scalar, this->data[1] * scalar, this->data[2] * scalar, this->data[3] * scalar};
+			return vec4<T>{static_cast<T>(this->data[0] * scalar), static_cast<T>(this->data[1] * scalar), static_cast<T>(this->data[2] * scalar), static_cast<T>(this->data[3] * scalar)};
 		}
 		
 		inline vec4<T> operator*(mat4x4<T> const &mat)
@@ -223,7 +223,7 @@ namespace Iris
 		/// Divide this v4 by a scalar number
 		inline vec4<T> operator/(T const &scalar) const
 		{
-			return vec4<T>{this->data[0] / scalar, this->data[1] / scalar, this->data[2] / scalar, this->data[3] / scalar};
+			return vec4<T>{static_cast<T>(this->data[0] / scalar), static_cast<T>(this->data[1] / scalar), static_cast<T>(this->data[2] / scalar), static_cast<T>(this->data[3] / scalar)};
 		}
 		
 		/// Compound add this v4 to another

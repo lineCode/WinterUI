@@ -238,7 +238,7 @@ namespace Iris
 		/// Add a scalar number to this v3
 		inline vec3<T> operator+(T const &scalar) const
 		{
-			return vec3<T>{this->data[0] + scalar, this->data[1] + scalar, this->data[2] + scalar};
+			return vec3<T>{static_cast<T>(this->data[0] + scalar), static_cast<T>(this->data[1] + scalar), static_cast<T>(this->data[2] + scalar)};
 		}
 		
 		/// Subtract this v3 from another
@@ -250,7 +250,7 @@ namespace Iris
 		/// Subtract a scalar number from this v3
 		inline vec3<T> operator-(T const &scalar) const
 		{
-			return vec3<T>{this->data[0] - scalar, this->data[1] - scalar, this->data[2] - scalar};
+			return vec3<T>{static_cast<T>(this->data[0] - scalar), static_cast<T>(this->data[1] - scalar), static_cast<T>(this->data[2] - scalar)};
 		}
 		
 		/// Negate this v3
@@ -268,7 +268,7 @@ namespace Iris
 		/// Multiply this v3 by a scalar number
 		inline vec3<T> operator*(T scalar) const
 		{
-			return vec3<T>{this->data[0] * scalar, this->data[1] * scalar, this->data[2] * scalar};
+			return vec3<T>{static_cast<T>(this->data[0] * scalar), static_cast<T>(this->data[1] * scalar), static_cast<T>(this->data[2] * scalar)};
 		}
 		
 		inline vec3<T> operator*(quat<T> const &in)
@@ -287,7 +287,7 @@ namespace Iris
 		/// Divide this v3 by a scalar number
 		inline vec3<T> operator/(T const &scalar) const
 		{
-			return vec3<T>{this->data[0] / scalar, this->data[1] / scalar, this->data[2] / scalar};
+			return vec3<T>{static_cast<T>(this->data[0] / scalar), static_cast<T>(this->data[1] / scalar), static_cast<T>(this->data[2] / scalar)};
 		}
 		
 		/// Compound add this v3 to another

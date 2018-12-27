@@ -77,7 +77,7 @@ namespace Iris
 		
 		inline vec2<T> operator+(T const &scalar) const
 		{
-			return vec2<T>{this->data[0] + scalar, this->data[1] + scalar};
+			return vec2<T>{static_cast<T>(this->data[0] + scalar), static_cast<T>(this->data[1] + scalar)};
 		}
 		
 		inline vec2<T> operator-(vec2<T> const &other) const
@@ -87,7 +87,7 @@ namespace Iris
 		
 		inline vec2<T> operator-(T const &scalar) const
 		{
-			return vec2<T>{this->data[0] - scalar, this->data[1] - scalar};
+			return vec2<T>{static_cast<T>(this->data[0] - scalar), static_cast<T>(this->data[1] - scalar)};
 		}
 		
 		inline vec2<T> operator-() const
@@ -102,7 +102,7 @@ namespace Iris
 		
 		inline vec2<T> operator*(T scalar) const
 		{
-			return vec2<T>{this->data[0] * scalar, this->data[1] * scalar};
+			return vec2<T>{static_cast<T>(this->data[0] * scalar), static_cast<T>(this->data[1] * scalar)};
 		}
 		
 		inline vec2<T> operator/(vec2<T> const &other) const
@@ -112,7 +112,7 @@ namespace Iris
 		
 		inline vec2<T> operator/(T const &scalar) const
 		{
-			return vec2<T>{this->data[0] / scalar, this->data[1] / scalar};
+			return vec2<T>{static_cast<T>(this->data[0] / scalar), static_cast<T>(this->data[1] / scalar)};
 		}
 		
 		inline vec2<T> &operator+=(vec2<T> const &other)

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <ctgmath>
 #include "vec3.hh"
 #include "general.hh"
+
+#include <ctgmath>
 
 namespace Iris
 {

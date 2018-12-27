@@ -215,7 +215,7 @@ namespace Iris
 		}
 		
 		/// Convert this quaternion into euler angles (in radians)
-		inline vec3<T> toEuler()
+		inline vec3<T> toEuler() const
 		{
 			T one = static_cast<T>(1);
 			T two = static_cast<T>(2);
@@ -251,6 +251,61 @@ namespace Iris
 			out.y() = cYaw * cRoll * sPitch + sYaw * sRoll * cPitch;
 			out.z() = sYaw * cRoll * cPitch - cYaw * sRoll * sPitch;
 			return out.normalized();
+		}
+		
+		inline vec4<T> toAxial() const
+		{
+			float angle, divisor, x, y, z;
+			angle = static_cast<T>(2) * std::acos(this->w());
+			divisor = std::sqrt(1 - (this->w() * this->w()));
+			if( divisor < 0.001f)
+			{
+				x = this->x();
+				y = this->y();
+				z = this->z();
+			}
+			else
+			{
+				x = this->x() / divisor;
+				y = this->y() / divisor;
+				z = this->z() / divisor;
+			}
+			return vec4<T>(x, y, z, angle);
+		}
+		
+		inline void fromAxial(vec4<T> const &in)
+		{
+			float a = in[3] / static_cast<T>(2);
+			float s = std::sin(a);
+			this->data[0] = in[0] * s;
+			this->data[1] = in[1] * s;
+			this->data[2] = in[2] * s;
+			this->data[3] = std::cos(a);
+			this->normalize();
+		}
+		
+		/// Convert an axial rotation into a rotation quaternion
+		inline void fromAxial(T const &xIn, T const &yIn, T const &zIn, T const &angle)
+		{
+			float a = angle / static_cast<T>(2);
+			float s = std::sin(a);
+			this->data[0] = xIn * s;
+			this->data[1] = yIn * s;
+			this->data[2] = zIn * s;
+			this->data[3] = std::cos(a);
+			this->normalize();
+		}
+		
+		/// Convert an axial rotation into a rotation quaternion
+		inline void fromAxial(vec3<T> const &xyzIn, T const &angle)
+		{
+			float a = angle / static_cast<T>(2);
+			float s = std::sin(a);
+			this->data[0] = xyzIn[0] * s;
+			this->data[1] = xyzIn[1] * s;
+			this->data[2] = xyzIn[2] * s;
+			this->data[3] = std::cos(a);
+			this->normalize();
 		}
 		
 		/// Calculate a quaternion rotation that aims at the given coordinates
@@ -293,45 +348,6 @@ namespace Iris
 			a = (-yrel * lookSensitivity) / 2.0f;
 			quat<T> yQuat = quat<T>{std::sin(a), 0.0f, 0.0f, std::cos(a)};
 			return quat<T>{xQuat * yQuat}.normalized();
-		}
-		
-		/// Convert an axial rotation into a rotation quaternion
-		inline static quat<T> axialToQuat(T const &xIn, T const &yIn, T const &zIn, T const &angle)
-		{
-			quat<T> out;
-			float a = angle / static_cast<T>(2);
-			float s = std::sin(a);
-			out[0] = xIn * s;
-			out[1] = yIn * s;
-			out[2] = zIn * s;
-			out[3] = std::cos(a);
-			return out.normalized();
-		}
-		
-		/// Convert an axial rotation into a rotation quaternion
-		inline static quat<T> axialToQuat(vec3<T> const &xyzIn, T const &angle)
-		{
-			quat<T> out;
-			float a = angle / static_cast<T>(2);
-			float s = std::sin(a);
-			out[0] = xyzIn[0] * s;
-			out[1] = xyzIn[1] * s;
-			out[2] = xyzIn[2] * s;
-			out[3] = std::cos(a);
-			return out.normalized();
-		}
-		
-		/// Convert an axial rotation into a rotation quaternion
-		inline static quat<T> axialToQuat(vec4<T> const &in)
-		{
-			quat<T> out;
-			float a = in[3] / static_cast<T>(2);
-			float s = std::sin(a);
-			out[0] = in[0] * s;
-			out[1] = in[1] * s;
-			out[2] = in[2] * s;
-			out[3] = std::cos(a);
-			return out.normalized();
 		}
 		
 		inline static quat<T> vecDelta(vec3<T> from, vec3<T> to, T lerp = static_cast<T>(1))
