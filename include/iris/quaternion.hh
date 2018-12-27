@@ -376,7 +376,9 @@ namespace Iris
 			if (angle > angleLimit) return {};
 			vec3<T> rotAxis = vec3<T>{0, 1, 0}.cross(upQ);
 			rotAxis.normalize();
-			return axialToQuat(rotAxis.x(), rotAxis.y(), rotAxis.z(), (angleLimit - angle) * lerp);
+			quat<T> out;
+			out.fromAxial(rotAxis.x(), rotAxis.y(), rotAxis.z(), (angleLimit - angle) * lerp);
+			return out;
 		}
 		
 		inline quat<T> correctOrientation(vec3<T> up, T lerp = static_cast<T>(1))
